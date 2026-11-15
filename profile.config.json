@@ -1,0 +1,117 @@
+{
+  "login": "lanangX",
+  "repo": "lanangx",
+  "assetsBranch": "assets",
+  "theme": "radar",
+  "profile": {
+    "achievements": [
+      "Quickdraw"
+    ],
+    "focus": "Pentest / Linux / OSS"
+  },
+  "whatIsThis": {
+    "en": "Lanang is a cybersecurity learner from Indonesia, studying web and network pentesting and building open-source helper tools (a redirect checker, AI skill packs) for fellow learners and security researchers.",
+    "id": "Pelajar keamanan siber dari Indonesia: belajar pentest web dan jaringan, membangun alat bantu open source untuk sesama pelajar dan peneliti keamanan.",
+    "find": "Below: skills, featured project, contribution scope, activity, more projects, contact."
+  },
+  "featureRepo": "redirecthunter",
+  "portfolioRepos": [
+    "helper",
+    "skill-template"
+  ],
+  "skills": {
+    "systems": [
+      {
+        "name": "Linux Mint",
+        "icon": "linuxmint"
+      },
+      {
+        "name": "Debian",
+        "icon": "debian"
+      },
+      {
+        "name": "Ubuntu",
+        "icon": "ubuntu"
+      }
+    ],
+    "languages": [
+      {
+        "name": "Python",
+        "icon": "python"
+      },
+      {
+        "name": "Rust",
+        "icon": "rust",
+        "light": true
+      },
+      {
+        "name": "Go",
+        "icon": "go"
+      },
+      {
+        "name": "Bash",
+        "icon": "bash",
+        "light": true
+      },
+      {
+        "name": "JavaScript",
+        "icon": "javascript"
+      }
+    ],
+    "tools": [
+      {
+        "name": "Git",
+        "icon": "git"
+      },
+      {
+        "name": "Docker",
+        "icon": "docker"
+      },
+      {
+        "name": "Burp",
+        "badge": "Bu"
+      },
+      {
+        "name": "Nmap",
+        "badge": "Nm"
+      },
+      {
+        "name": "Wireshark",
+        "badge": "Ws"
+      },
+      {
+        "name": "Metasploit",
+        "badge": "Ms"
+      },
+      {
+        "name": "FFUF",
+        "badge": "Ff"
+      }
+    ]
+  },
+  "socials": [
+    {
+      "label": "LinkedIn",
+      "icon": "linkedin",
+      "url": "https://www.linkedin.com/in/lanangx"
+    },
+    {
+      "label": "X",
+      "icon": "x",
+      "url": "https://x.com/lanangx3"
+    },
+    {
+      "label": "Email",
+      "icon": "gmail",
+      "url": "mailto:lanangkali7@gmail.com"
+    }
+  ],
+  "render": {
+    "fps": 15,
+    "seconds": 8,
+    "quality": 55,
+    "width": 900,
+    "height": 400,
+    "economy": false
+  }
+}

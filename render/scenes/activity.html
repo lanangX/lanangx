@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#05070f">
+<canvas id="c" width="900" height="400"></canvas>
+<script type="module">
+/* Activity overview: trace A-scope. Sumbu x = jenis aktivitas (commit, PR, issue, review) pada posisi "range" tetap,
+   tinggi spike = porsi jenis itu dari seluruh kontribusi. Noise dasar hanya dekorasi dan jauh lebih redup dari spike. */
+import { THREE, W, H, T, TAU, PAL, MONO, K, fade, mod, rng, getData, layer2d, createStage, crtFinish, text, sampleBadge, toScreen } from '/lib/common.js';
+const D = getData();
+const { R, ortho } = createStage();
+const A = D.activity || { commit: 0, pr: 0, issue: 0, review: 0 };
+const vals = [A.commit, A.pr, A.issue, A.review]; const sum = vals.reduce((a, b) => a + b, 0);
+const share = vals.map(v => sum ? v / sum : 0);
+const NAMES = ['COMMITS', 'PULL REQUESTS', 'ISSUES', 'REVIEWS'];
+
+const S = new THREE.Scene(); S.fog = new THREE.Fog(PAL.bg, 7, 14);
+const cam = new THREE.PerspectiveCamera(30, W / H, .1, 50);
+const g = new THREE.Group(); S.add(g);
+const L = 6.4, PW = 7.2, PH = 3.5, BASE = -.55, MAXH = 1.9;
+const grid = new THREE.GridHelper(16, 64, 0x12356e, 0x0b2147); grid.position.y = -2.2; grid.material.transparent = true; grid.material.opacity = .45; S.add(grid);
+
+/* layar + graticule */
+const gt = (() => { const cv = document.createElement('canvas'); cv.width = 1440; cv.height = 700; const x = cv.getContext('2d');
+  const gr = x.createLinearGradient(0, 0, 0, 700); gr.addColorStop(0, '#061634'); gr.addColorStop(1, '#040b1c'); x.fillStyle = gr; x.fillRect(0, 0, 1440, 700);
+  x.strokeStyle = PAL.grid; x.lineWidth = 2; const mx = (1440 - L / PW * 1440) / 2;
+  for (let i = 0; i <= 8; i++) { const px = mx + (1440 - 2 * mx) * i / 8; x.globalAlpha = i % 2 ? .35 : .6; x.beginPath(); x.moveTo(px, 50); x.lineTo(px, 650); x.stroke(); }
+  for (let j = 0; j <= 6; j++) { const py = 50 + 600 * j / 6; x.globalAlpha = j % 2 ? .35 : .6; x.beginPath(); x.moveTo(mx, py); x.lineTo(1440 - mx, py); x.stroke(); }
+  x.globalAlpha = 1; x.strokeStyle = PAL.phos; x.lineWidth = 3; x.strokeRect(4, 4, 1432, 692);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const screen = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), new THREE.MeshBasicMaterial({ map: gt })); screen.position.y = .35; g.add(screen);
+const bez = new THREE.Mesh(new THREE.BoxGeometry(PW + .3, PH + .3, .1), new THREE.MeshBasicMaterial({ color: 0x0a1630 })); bez.position.set(0, .35, -.07); g.add(bez);
+const bezEdge = new THREE.LineSegments(new THREE.EdgesGeometry(bez.geometry), new THREE.LineBasicMaterial({ color: 0x2f8cff })); bezEdge.position.copy(bez.position); g.add(bezEdge);
+
+/* trace: ribbon bertekstur alfa per vertex (fade fosfor mengikuti titik pindai) */
+const NS = 420, r = rng(21);
+const xs = Array.from({ length: NS }, (_, i) => -L / 2 + L * i / (NS - 1));
+const px = k => -L / 2 + L * (k + .5) / 4;
+const noise = xs.map((x, i) => (r() - .5) * .05 + Math.sin(i * .9) * .008);
+const ys = xs.map((x, i) => { let y = BASE + noise[i]; for (let k = 0; k < 4; k++) { const d = (x - px(k)) / .17; y += share[k] * MAXH * Math.exp(-d * d); } return y; });
+function ribbon(w, a0) {
+  const pos = new Float32Array(NS * 2 * 3), alp = new Float32Array(NS * 2), idx = [];
+  for (let i = 0; i < NS; i++) { const up = ys[i] + w / 2, dn = ys[i] - w / 2; pos.set([xs[i], up, 0, xs[i], dn, 0], i * 6); if (i < NS - 1) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('aAlpha', new THREE.BufferAttribute(alp, 1)); geo.setIndex(idx);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uC: { value: new THREE.Color(PAL.cyan) }, uS: { value: a0 } },
+    vertexShader: 'attribute float aAlpha; varying float vA; void main(){ vA=aAlpha; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
+    fragmentShader: 'varying float vA; uniform vec3 uC; uniform float uS; void main(){ gl_FragColor=vec4(uC*vA*uS,1.0);} ' });
+  const m = new THREE.Mesh(geo, mat); m.position.z = .02; return m;
+}
+const core = ribbon(.06, 1.0), glow = ribbon(.24, .28); g.add(glow); g.add(core);
+const alCore = core.geometry.attributes.aAlpha, alGlow = glow.geometry.attributes.aAlpha;
+
+/* garis pindai vertikal */
+const scanGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, BASE - .3, .03), new THREE.Vector3(0, BASE + MAXH + .35, .03)]);
+const scan = new THREE.Line(scanGeo, new THREE.LineBasicMaterial({ color: 0x9fdcff, transparent: true, opacity: .8 })); g.add(scan);
+
+const hud = layer2d((ctx, t) => {
+  text(ctx, 'ACTIVITY  /  A-SCOPE', 40, 40, { size: 13, color: PAL.cyan, bold: true });
+  text(ctx, 'SPIKE HEIGHT = SHARE OF CONTRIBUTION TYPE', 40, 58, { size: 10, color: PAL.dim });
+  for (let k = 0; k < 4; k++) {
+    const top = toScreen(new THREE.Vector3(px(k), BASE + share[k] * MAXH, .02).add(g.position), cam);
+    const base = toScreen(new THREE.Vector3(px(k), BASE, .02), cam);
+    const nm = NAMES[k], on = vals[k] > 0;
+    text(ctx, String(vals[k]), top.x, Math.min(top.y - 26, base.y - 30), { size: 22, color: on ? PAL.ice : PAL.dim, align: 'center', bold: true, glow: on ? 10 : 0 });
+    text(ctx, on ? `${Math.round(share[k] * 100)}%` : '0%', top.x, Math.min(top.y - 10, base.y - 14), { size: 11, color: on ? PAL.cyan : PAL.dim, align: 'center' });
+    text(ctx, nm, base.x, base.y + 64, { size: 12, color: on ? PAL.ice : PAL.dim, align: 'center' });
+  }
+  if (!sum) text(ctx, 'NO ACTIVITY IN RANGE', W / 2, 150, { size: 14, color: PAL.dim, align: 'center' });
+  text(ctx, 'RANGE →', W - 40, 346, { size: 10, color: PAL.dim, align: 'right' });
+  sampleBadge(ctx, D); crtFinish(ctx, t);
+});
+
+const PH0 = .35;
+window.renderFrame = t => {
+  const p = t / T * TAU, sx = mod(t / T + PH0, 1) * L - L / 2;
+  scan.position.x = sx;
+  for (let i = 0; i < NS; i++) {
+    const dx = mod(sx - xs[i], L), d = dx / L * TAU, a = .2 + .8 * fade(d) + (dx < .05 ? .5 : 0);
+    alCore.setX(i * 2, a); alCore.setX(i * 2 + 1, a); alGlow.setX(i * 2, a); alGlow.setX(i * 2 + 1, a);
+  }
+  alCore.needsUpdate = alGlow.needsUpdate = true;
+  const az = .16 * Math.sin(p), el = THREE.MathUtils.degToRad(6 + 1.5 * Math.sin(p + 1)), dist = 9.0;
+  cam.position.set(dist * Math.sin(az), .35 + dist * Math.sin(el), dist * Math.cos(az) * Math.cos(el));
+  cam.lookAt(0, .1, 0); cam.updateMatrixWorld();
+  hud.update(t);
+  R.clear(); R.render(S, cam); R.clearDepth(); R.render(hud.scene, ortho);
+};
+window.renderFrame(0); window.ready = true;
+</script></body></html>

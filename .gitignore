@@ -1,0 +1,14 @@
+node_modules/
+render/custom/
+.build/
+dist/
+dist-sample/
+
+# artefak pengiriman: tidak boleh di-commit
+*.patch
+*.diff
+*.bundle
+*.zip
+*.tar
+*.tar.gz
+*.tgz

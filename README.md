@@ -1,59 +1,14 @@
-# Hi there 👋
+<div align="center">
 
-I'm Lanang, an aspiring Penetration Tester and Open Source Developer from Indonesia.
+<picture><source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/lanangX/lanangx/assets/header-static.png"><img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/header.webp" alt="lanangX - cybersecurity learner"></picture>
+<img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/profile-card.svg" alt="Profile of lanangX">
+<img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/what-is.svg" alt="What this profile is">
+<img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/skillset.svg" alt="Skill set: systems, languages, tools">
+<a href="https://github.com/lanangX/redirecthunter"><picture><source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/lanangX/lanangx/assets/feature-static.png"><img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/feature.webp" alt="Featured project redirecthunter"></picture></a>
+<picture><source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/lanangX/lanangx/assets/contribution-static.png"><img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/contribution.webp" alt="Contribution scope for the last 365 days"></picture>
+<picture><source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/lanangX/lanangx/assets/activity-static.png"><img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/activity.webp" alt="Activity overview by contribution type"></picture>
+<a href="https://github.com/lanangX/helper"><img align="top" width="49.95%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/repo-0.svg" alt="helper"></a><a href="https://github.com/lanangX/skill-template"><img align="top" width="49.95%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/repo-1.svg" alt="skill-template"></a>
+<img align="top" width="28.55%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/fill-l.svg" alt=""><a href="https://www.linkedin.com/in/lanangx"><img align="top" width="17.44%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/pill-linkedin.svg" alt="LinkedIn"></a><a href="https://x.com/lanangx3"><img align="top" width="10.77%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/pill-x.svg" alt="X"></a><a href="mailto:lanangkali7@gmail.com"><img align="top" width="14.55%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/pill-gmail.svg" alt="Email"></a><img align="top" width="28.66%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/fill-r.svg" alt="">
+<img align="top" width="100%" src="https://raw.githubusercontent.com/lanangX/lanangx/assets/footer.svg" alt="Last update stamp">
 
-## About Me
-
-- Cybersecurity Student
-- Learning Web Security & Penetration Testing
-- Linux enthusiast
-- Open Source contributor
-- Interested in Reverse Engineering, Malware Analysis, and OSINT
-
-## Currently Learning
-
-- Web Application Security
-- Active Directory
-- Network Security
-- Rust
-- Go
-- Python Automation
-
-## Tech Stack
-
-### Languages
-
-- Python
-- Rust
-- Go
-- Bash
-- JavaScript
-
-### Operating Systems
-
-- Linux Mint XFCE
-- Debian
-- Ubuntu
-
-### Tools
-
-- Git
-- Docker
-- Burp Suite Community
-- Nmap
-- Wireshark
-- Metasploit
-- FFUF
-
-## Current Goals
-
-- Contribute to Open Source
-- Build Cybersecurity Tools
-- Earn Practical Security Skills
-- Share Learning Notes
-
-## Connect with Me
-
-- LinkedIn
-- X (Twitter)
-- Email
+</div>

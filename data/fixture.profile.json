@@ -1,0 +1,15 @@
+{
+  "_note": "FIXTURE untuk uji lokal tanpa jaringan. Bio, pengikut, dan nama repo dari halaman publik github.com/lanangX yang saya baca saat sesi; deskripsi repo di bawah adalah placeholder bertanda [sample]. Mode live tidak memakai file ini.",
+  "profile": {
+    "login": "lanangX",
+    "name": null,
+    "bio": "Cybersecurity learner focused on penetration testing, Linux, networking, automation, and open source.",
+    "location": null,
+    "followers": 0,
+    "following": 1
+  },
+  "repos": {
+    "helper": { "name": "helper", "description": "[sample] Shell-based AI skill pack and helper scripts.", "url": "https://github.com/lanangX/helper", "stars": 0, "pushedAt": "2026-11-05T03:00:00Z", "isTemplate": false, "language": "Shell", "commits": [] },
+    "skill-template": { "name": "skill-template", "description": "[sample] Template for building AI agent skills.", "url": "https://github.com/lanangX/skill-template", "stars": 0, "pushedAt": "2026-10-20T03:00:00Z", "isTemplate": true, "language": "Shell", "commits": [] }
+  }
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#05070f">
+<canvas id="c" width="900" height="400"></canvas>
+<script type="module">
+/* Kontribusi: scope PPI. Bearing = tanggal (365 hari = 360 derajat), cincin = tingkat jumlah, ukuran blip = jumlah.
+   Hari tanpa kontribusi tidak punya blip. Sapuan 1 putaran = 8 detik; kecerahan blip = fade fosfor. */
+import { THREE, W, H, T, TAU, PAL, MONO, K, fade, mod, rng, getData, layer2d, createStage, scopeFace, crtFinish, text, sampleBadge, blipPoints, hex, toScreen, addDays, fmtDate } from '/lib/common.js';
+const D = getData();
+const { R, ortho } = createStage();
+const days = D.days || []; const N = days.length || 365;
+const start = D.start || '2025-01-01';
+
+const S = new THREE.Scene(); S.fog = new THREE.Fog(PAL.bg, 6, 12);
+const cam = new THREE.PerspectiveCamera(30, W / H, .1, 50);
+const RAD = 1.3;
+const root = new THREE.Group(); S.add(root);
+const grid = new THREE.GridHelper(14, 56, 0x12356e, 0x0b2147); grid.position.y = -.2; grid.material.transparent = true; grid.material.opacity = .5; S.add(grid);
+const base = new THREE.Mesh(new THREE.CylinderGeometry(RAD + .1, RAD + .16, .12, 96), new THREE.MeshBasicMaterial({ color: 0x0a1630 })); base.position.y = -.07; root.add(base);
+const rim = new THREE.Mesh(new THREE.TorusGeometry(RAD + .09, .012, 8, 128), new THREE.MeshBasicMaterial({ color: 0x2f8cff })); rim.rotation.x = Math.PI / 2; root.add(rim);
+const face = new THREE.Mesh(new THREE.CircleGeometry(RAD, 96), new THREE.MeshBasicMaterial({ map: scopeFace({ ringCount: 4, labels: false }) })); face.rotation.x = -Math.PI / 2; root.add(face);
+
+/* tick bulan: label di pinggir scope pada bearing hari pertama tiap bulan */
+const mTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 1024; const x = cv.getContext('2d'); const c = 512;
+  x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `bold 34px ${MONO}`; x.fillStyle = PAL.ice;
+  const names = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
+  for (let i = 0; i < N; i++) { const d = addDays(start, i); if (d.endsWith('-01')) { const th = (i + .5) / N * TAU, r = 512 * .855; x.save(); x.translate(c + r * Math.sin(th), c - r * Math.cos(th)); x.globalAlpha = .9; x.fillText(names[+d.slice(5, 7) - 1], 0, 0); x.restore(); } }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const mon = new THREE.Mesh(new THREE.CircleGeometry(RAD, 96), new THREE.MeshBasicMaterial({ map: mTex, transparent: true, depthWrite: false })); mon.rotation.x = -Math.PI / 2; mon.position.y = .003; root.add(mon);
+
+const sweepMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uSweep: { value: 0 }, uK: { value: K } },
+  vertexShader: 'varying vec2 vP; void main(){ vP=position.xy; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
+  fragmentShader: `varying vec2 vP; uniform float uSweep; uniform float uK; const float TAU=6.28318530718;
+    void main(){ float th=atan(vP.x, vP.y); float d=mod(uSweep-th, TAU); float a=exp(-uK*d/TAU); float line=smoothstep(.05,0.0,d);
+      float r=length(vP)/${RAD.toFixed(2)}; gl_FragColor=vec4((vec3(.10,.45,1.0)*a*.5+vec3(.5,.85,1.0)*line)*smoothstep(1.0,.97,r),1.0);} `,
+});
+const sweep = new THREE.Mesh(new THREE.CircleGeometry(RAD, 96), sweepMat); sweep.rotation.x = -Math.PI / 2; sweep.position.y = .004; root.add(sweep);
+
+/* data -> blip */
+const rnd = rng(5); const tierR = c => c >= 8 ? .30 : c >= 4 ? .48 : c >= 2 ? .66 : .84;
+const items = []; let peakIdx = -1, peak = 0;
+days.forEach((c, i) => { if (c > 0) { items.push({ i, c, th: (i + .5) / N * TAU, r: (tierR(c) + (rnd() - .5) * .05) * RAD * .92 }); if (c > peak) { peak = c; peakIdx = i; } } });
+const blips = blipPoints(Math.max(1, items.length)); blips.position.y = .03; root.add(blips);
+const pos = blips.geometry.attributes.position, sz = blips.geometry.attributes.aSize, al = blips.geometry.attributes.aAlpha, co = blips.geometry.attributes.aColor;
+const cIce = hex(PAL.ice), cCy = hex(PAL.cyan), cAm = hex(PAL.amber);
+items.forEach((b, k) => { pos.setXYZ(k, b.r * Math.sin(b.th), 0, -b.r * Math.cos(b.th)); sz.setX(k, .05 + .018 * Math.sqrt(b.c)); const c = b.i === peakIdx ? cAm.clone() : cCy.clone().lerp(cIce, Math.min(1, b.c / 12)); co.setXYZ(k, c.r, c.g, c.b); });
+pos.needsUpdate = sz.needsUpdate = co.needsUpdate = true;
+const peakItem = items.find(b => b.i === peakIdx);
+/* pusat: hub */
+const hub = new THREE.Mesh(new THREE.CircleGeometry(.05, 24), new THREE.MeshBasicMaterial({ color: 0x29d3ff })); hub.rotation.x = -Math.PI / 2; hub.position.y = .02; root.add(hub);
+
+/* statistik turunan dari data nyata */
+const active = days.filter(c => c > 0).length;
+let streak = 0, best = 0; days.forEach(c => { streak = c > 0 ? streak + 1 : 0; best = Math.max(best, streak); });
+const total = D.total ?? days.reduce((a, b) => a + b, 0);
+
+const hud = layer2d((ctx, t) => {
+  const X0 = 560;
+  text(ctx, 'CONTACTS  /  365 DAYS', X0, 52, { size: 13, color: PAL.cyan, bold: true });
+  ctx.strokeStyle = PAL.phos; ctx.globalAlpha = .7; ctx.beginPath(); ctx.moveTo(X0, 62); ctx.lineTo(W - 36, 62); ctx.stroke(); ctx.globalAlpha = 1;
+  text(ctx, String(total), X0, 118, { size: 52, color: PAL.ice, bold: true, glow: 14 });
+  text(ctx, 'CONTRIBUTIONS', X0, 138, { size: 12, color: PAL.dim });
+  const row = (l, v, y) => { text(ctx, l, X0, y, { size: 12, color: PAL.dim }); text(ctx, v, W - 36, y, { size: 13, color: PAL.ice, align: 'right' }); };
+  row('ACTIVE DAYS', `${active} / ${N}`, 172);
+  row('LONGEST STREAK', `${best} d`, 192);
+  row('PEAK DAY', peak ? `${peak}  ${fmtDate(addDays(start, peakIdx))}` : '-', 212);
+  text(ctx, 'RANGE RINGS', X0, 246, { size: 11, color: PAL.cyan });
+  [['OUTER', '1'], ['', '2-3'], ['', '4-7'], ['INNER', '8+']].forEach(([n, v], i) => { const y = 264 + i * 17; ctx.strokeStyle = PAL.phos; ctx.globalAlpha = .5 + i * .15; ctx.beginPath(); ctx.arc(X0 + 8, y - 4, 4 + i * 1.2, 0, TAU); ctx.stroke(); ctx.globalAlpha = 1; text(ctx, `${v} per day`, X0 + 28, y, { size: 12, color: PAL.ice }); text(ctx, n, W - 36, y, { size: 11, color: PAL.dim, align: 'right' }); });
+  text(ctx, 'BEARING = DATE  ·  BLIP SIZE = COUNT', X0, 352, { size: 10, color: PAL.dim });
+  if (!active) text(ctx, 'NO CONTACTS IN RANGE', 250, 218, { size: 14, color: PAL.dim, align: 'center' });
+  if (peakItem) { const p = toScreen(new THREE.Vector3(peakItem.r * Math.sin(peakItem.th), .03, -peakItem.r * Math.cos(peakItem.th)).applyMatrix4(root.matrixWorld), cam);
+    ctx.strokeStyle = PAL.amber; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, TAU); ctx.stroke(); text(ctx, 'PEAK', p.x + 12, p.y - 8, { size: 10, color: PAL.amber, bold: true }); }
+  sampleBadge(ctx, D); crtFinish(ctx, t);
+});
+
+cam.setViewOffset(W, H, 165, 0, W, H);
+const phase = 2.0;
+window.renderFrame = t => {
+  const p = t / T * TAU, swp = mod(p + phase, TAU);
+  sweepMat.uniforms.uSweep.value = swp;
+  for (let k = 0; k < items.length; k++) { const d = mod(swp - items[k].th, TAU); al.setX(k, .2 + .8 * fade(d) + (d < .12 ? .6 : 0)); }
+  al.needsUpdate = true;
+  const az = .18 * Math.sin(p), e = THREE.MathUtils.degToRad(56 + 2.5 * Math.sin(p + 1)), dist = 7.4;
+  cam.position.set(dist * Math.sin(az) * Math.cos(e) * .6, dist * Math.sin(e) * .62, dist * Math.cos(az) * Math.cos(e) + .5);
+  cam.lookAt(0, -.05, .1); cam.updateMatrixWorld(); root.updateMatrixWorld(true);
+  hud.update(t);
+  R.clear(); R.render(S, cam); R.clearDepth(); R.render(hud.scene, ortho);
+};
+window.renderFrame(0); window.ready = true;
+</script></body></html>
