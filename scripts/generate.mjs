@@ -27,7 +27,8 @@ async function gql(query) {
   return j.data;
 }
 const REPO_FIELDS = 'name description url stargazerCount pushedAt isTemplate primaryLanguage{name} defaultBranchRef{target{... on Commit{history(first:8){nodes{committedDate}}}}}';
-const toRepo = r => r && ({ name: r.name, description: r.description || '', url: r.url, stars: r.stargazerCount, pushedAt: r.pushedAt, isTemplate: !!r.isTemplate, language: r.primaryLanguage?.name || '', commits: (r.defaultBranchRef?.target?.history?.nodes || []).map(n => n.committedDate.slice(0, 10)) });
+const plain = s => String(s || '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/(\*\*|__|`)/g, '').replace(/\s+/g, ' ').trim();
+const toRepo = r => r && ({ name: r.name, description: plain(r.description), url: r.url, stars: r.stargazerCount, pushedAt: r.pushedAt, isTemplate: !!r.isTemplate, language: r.primaryLanguage?.name || '', commits: (r.defaultBranchRef?.target?.history?.nodes || []).map(n => n.committedDate.slice(0, 10)) });
 
 async function fetchLive() {
   const names = [cfg.featureRepo, ...cfg.portfolioRepos];

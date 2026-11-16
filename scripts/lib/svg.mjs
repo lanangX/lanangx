@@ -136,17 +136,17 @@ export function skillSet(sk, iconDir) {
 
 /* 8. Portfolio: satu kartu repo (450 x 210); dua kartu ditaruh berdampingan di README */
 export function repoCard(r, idx, now) {
-  const w = 450, H = 210, days = r.pushedAt ? Math.max(0, Math.round((now - Date.parse(r.pushedAt)) / 864e5)) : null;
+  const w = 450, H = 232, days = r.pushedAt ? Math.max(0, Math.round((now - Date.parse(r.pushedAt)) / 864e5)) : null;
   const ago = days === null ? '' : days === 0 ? 'PUSHED TODAY' : days < 60 ? `PUSHED ${days}D AGO` : days < 700 ? `PUSHED ${Math.round(days / 30)}MO AGO` : `PUSHED ${Math.round(days / 365)}Y AGO`;
-  const meta = [r.language ? r.language.toUpperCase() : null, `★ ${r.stars ?? 0}`, ago].filter(Boolean).join('  ·  ');
-  const d = wrap(r.description || 'No description.', 44, 4);
+  const meta = [r.language ? r.language.toUpperCase() : null, `★ ${r.stars ?? 0}`, r.isTemplate ? 'TEMPLATE' : null, ago].filter(Boolean).join('  ·  ');
+  const d = wrap(r.description || 'No description.', 44, 3);
   const f = frame(H, 'rc' + idx, { brackets: false });
   const body = `<rect x="22" y="22" width="${w - 44}" height="${H - 44}" fill="#040c1e" fill-opacity=".8" stroke="${C.phos}" stroke-width="1.5"/><rect x="22" y="22" width="4" height="${H - 44}" fill="${C.amber}"/>
-<text x="42" y="46" font-size="10.5" fill="${C.cyan}" font-weight="bold">TRK ${String(idx + 2).padStart(2, '0')}${r.isTemplate ? '  /  TEMPLATE' : ''}</text>
+<text x="42" y="46" font-size="10.5" fill="${C.cyan}" font-weight="bold">TRK ${String(idx + 2).padStart(2, '0')}  /  ${esc(trunc(String(r.name).toUpperCase(), 32))}</text>
 <text x="42" y="78" font-size="22" font-weight="bold" fill="${C.ice}">${esc(trunc(String(r.name).toUpperCase(), 24))}</text>
 <text x="42" y="98" font-size="11" fill="${C.cyan}">${esc(meta)}</text>
 ${d.map((l, i) => `<text x="42" y="${126 + i * 18}" font-size="12.5" fill="${C.ice}">${esc(l)}</text>`).join('')}
-<text x="42" y="${H - 34}" font-size="11" fill="${C.dim}">${esc(String(r.url || '').replace(/^https?:\/\//, ''))}</text>`;
+<text x="42" y="${H - 32}" font-size="11" fill="${C.dim}">${esc(String(r.url || '').replace(/^https?:\/\//, ''))}</text>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${H}" width="${w}" height="${H}" role="img" aria-label="${esc(r.name)}"><title>${esc(r.name)}</title><desc>${esc(r.description || '')}</desc>
 <defs><pattern id="rc${idx}sl" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" opacity=".16"/></pattern></defs><style>text{font-family:${FONT}}</style>
 <rect width="${w}" height="${H}" fill="${C.bg}"/>${body}<rect width="${w}" height="${H}" fill="url(#rc${idx}sl)"/></svg>`;
