@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 232" width="450" height="232" role="img" aria-label="skill-template"><title>skill-template</title><desc>Template repo skill AI (SKILL.md) untuk Claude Code, claude.ai, Codex, dan platform lain: hero 3D, badge, CI, rilis, evals, dan init.sh sekali jalan. Publik atau privat.</desc>
+<defs><pattern id="rc1sl" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" opacity=".16"/></pattern></defs><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono','Liberation Mono',monospace}</style>
+<rect width="450" height="232" fill="#05070f"/><rect x="22" y="22" width="406" height="188" fill="#040c1e" fill-opacity=".8" stroke="#2f8cff" stroke-width="1.5"/><rect x="22" y="22" width="4" height="188" fill="#ffb020"/>
+<text x="42" y="46" font-size="10.5" fill="#29d3ff" font-weight="bold">TRK 03  /  SKILL-TEMPLATE</text>
+<text x="42" y="78" font-size="22" font-weight="bold" fill="#dbe8ff">SKILL-TEMPLATE</text>
+<text x="42" y="98" font-size="11" fill="#29d3ff">SHELL  ·  ★ 0  ·  TEMPLATE  ·  PUSHED 6D AGO</text>
+<text x="42" y="126" font-size="12.5" fill="#dbe8ff">Template repo skill AI (SKILL.md) untuk</text><text x="42" y="144" font-size="12.5" fill="#dbe8ff">Claude Code, claude.ai, Codex, dan platform</text><text x="42" y="162" font-size="12.5" fill="#dbe8ff">lain: hero 3D, badge, CI, rilis, evals,…</text>
+<text x="42" y="200" font-size="11" fill="#5d7fb8">github.com/lanangX/skill-template</text><rect width="450" height="232" fill="url(#rc1sl)"/></svg>
