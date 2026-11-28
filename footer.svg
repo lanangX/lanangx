@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 64" width="900" height="64" role="img" aria-label="Footer">
+<title>Footer</title><desc>Last update 2026-11-28 11:28 UTC</desc>
+<defs><pattern id="ftsl" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" opacity=".16"/></pattern>
+      <radialGradient id="ftvg" cx="50%" cy="50%" r="75%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".4"/></radialGradient></defs>
+<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono','Liberation Mono',monospace}@media (prefers-reduced-motion:reduce){.an{animation:none!important}}</style>
+<rect width="900" height="64" fill="#05070f"/><text x="46" y="38" font-size="11.5" fill="#5d7fb8">LAST SWEEP  <tspan fill="#29d3ff">2026-11-28 11:28 UTC</tspan>   ·   AUTO-UPDATED BY GITHUB ACTIONS</text>
+<g transform="translate(840,32)"><circle r="14" fill="none" stroke="#12356e" stroke-width="1.5"/><circle r="7" fill="none" stroke="#12356e" stroke-width="1"/><g><path d="M0 0L0 -14A14 14 0 0 1 10.042985272593318 -9.753893930860315Z" fill="#2f8cff" opacity=".22"/><line x1="0" y1="0" x2="10.042985272593318" y2="-9.753893930860315" stroke="#29d3ff" stroke-width="1.5"/>
+<animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="8s" repeatCount="indefinite"/></g></g><rect width="900" height="64" fill="url(#ftsl)"/><rect width="900" height="64" fill="url(#ftvg)"/><g stroke="#2f8cff" stroke-width="2" fill="none" opacity=".7">
+    <path d="M10 32V10H32"/><path d="M890 32V10H868"/>
+    <path d="M10 32V54H32"/><path d="M890 32V54H868"/></g>
+</svg>
